@@ -3,13 +3,14 @@
 # complainants or officers
 
 import os
-import pandas
-import re
+import pandas as pd
+
+##### LOADING FUNCTIONS #####
 
 def load_full_dataset(filename):
 	'''
 	Load data from specified file. This loads the full dataset with an added
-	"YEAR" column
+	"COMPLAINT_YEAR" column
 
 	Inputs:
 	    filename: (string) filename for the copa file
@@ -21,8 +22,8 @@ def load_full_dataset(filename):
 	# Remove timestamp from date string
 	full_df["SIMPLE_DATE"] = full_df["COMPLAINT_DATE"].str.split(" ").str[0]
 
-	# Extract year from SIMPLE_DATE
-	full_df["COMPLAINT_YEAR"] = full_df["SIMPLE_DATE"].str.split("/").str[2]
+	# Extract year from SIMPLE_DATE and convert to int
+	full_df["COMPLAINT_YEAR"] = full_df["SIMPLE_DATE"].str.split("/").str[2].astype(int)
 
 	# Drop SIMPLE_DATE and reorder columns
 	full_df.drop("SIMPLE_DATE", axis = 1)
@@ -31,16 +32,16 @@ def load_full_dataset(filename):
 	full_df = full_df[cols]
 
 	# Split all columns that may have multiple values
-	full_df["BEAT"] = full_df["BEAT"].str.split("|")
+	full_df["BEAT"] = full_df["BEAT"].str.split("|", expand = True)
 	
-	full_df["RACE_OF_COMPLAINANTS"] = full_df["RACE_OF_COMPLAINANTS"].str.split("|")
-	full_df["SEX_OF_COMPLAINANTS"] = full_df["SEX_OF_COMPLAINANTS"].str.split("|")
-	full_df["AGE_OF_COMPLAINANTS"] = full_df["AGE_OF_COMPLAINANTS"].str.split("|")
+	full_df["RACE_OF_COMPLAINANTS"] = full_df["RACE_OF_COMPLAINANTS"].str.split("|", expand = True)
+	full_df["SEX_OF_COMPLAINANTS"] = full_df["SEX_OF_COMPLAINANTS"].str.split("|", expand = True)
+	full_df["AGE_OF_COMPLAINANTS"] = full_df["AGE_OF_COMPLAINANTS"].str.split("|", expand = True)
     
-	full_df["RACE_OF_INVOLVED_OFFICERS"] = full_df["RACE_OF_INVOLVED_OFFICERS"].str.split("|")
-	full_df["SEX_OF_INVOLVED_OFFICERS"] = full_df["SEX_OF_INVOLVED_OFFICERS"].str.split("|")
-	full_df["AGE_OF_INVOLVED_OFFICERS"] = full_df["AGE_OF_INVOLVED_OFFICERS"].str.split("|")
-	full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"] = full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"].str.split("|")
+	full_df["RACE_OF_INVOLVED_OFFICERS"] = full_df["RACE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
+	full_df["SEX_OF_INVOLVED_OFFICERS"] = full_df["SEX_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
+	full_df["AGE_OF_INVOLVED_OFFICERS"] = full_df["AGE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
+	full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"] = full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
 	
 	# HIGH LEVEL SUMMARY STATISTICS
 	# Total complaints
@@ -61,7 +62,7 @@ def load_full_dataset(filename):
 	print("There were ", num_complaints, "reported complaints against CPD ", 
 		"officers between ", min_year, " and ", max_year, ".")
 	print()
-	print("Below are the complaint breakdowns by year, jurisdictional", 
+	print("Below are the complaint breakdowns by year and jurisdictional", 
 		"assignment: ")
 	print()
 	print("YEAR")
@@ -117,7 +118,7 @@ def reduce_to_copa_ipra(full_dataset):
 	# Print Statements
 	print()
 	print(num_complaints_final, " or ", "{:.0%}".format(final_pct), "of all", 
-		"complaints were under IPRA or COPA jurisdiction beat between ", 
+		"complaints were under IPRA or COPA jurisdiction between ", 
 		min_year, " and ", max_year, ".")
 	print()
 	print("Below are the complaint breakdowns by year, category, status, and finding:")
@@ -139,5 +140,57 @@ def reduce_to_copa_ipra(full_dataset):
 		print(f, ": ", finding.loc[f]["FINDING_CODE"])
 
 	return copa_ipra_df
+
+
+##### COMPLAINT ANALYSIS #####
+
+def top_k_complaints_by_beat(copa_ipra_df, beat, k, year = None, month = None):
+	'''
+	Find the top complaints in a police beat, with the option to specify
+	a year and/or month of interest.
+
+	Inputs:
+		copa_ipra_df: (pandas dataframe) dataframe that excludes BIA cases
+		beat: (string) represents a Chicago police beat 
+		k: (int) the number of items to return
+		year: (int) optional year of interest
+		month: (int) optional month of interest
+
+	Returns: list of tuples representing the complaint category and number of
+		complaints
+	'''
+	assert type(beat) == str, ("Beat number must be input as string")
+	
+	# Subset dataframe on beat, year, and month (as needed)
+	if year == None and month == None:
+		beat_df = copa_ipra_df[copa_ipra_df["BEAT"].map(lambda x: beat in x)]
+	elif year != None and month == None:
+		year_df = copa_ipra_df[copa_ipra_df["COMPLAINT_YEAR"] == year]
+		beat_df = year_df[year_df["BEAT"].map(lambda x: beat in x)]
+	elif year == None and month != None:
+		month_df = copa_ipra_df[copa_ipra_df["COMPLAINT_MONTH"] == month]
+		beat_df = month_df[month_df["BEAT"].map(lambda x: beat in x)]
+	else:
+		year_df = copa_ipra_df[copa_ipra_df["COMPLAINT_YEAR"] == year]
+		year_month_df = year_df[year_df["COMPLAINT_MONTH"] == month]
+		beat_df = year_month_df[year_month_df["BEAT"].map(lambda x: beat in x)]
+
+	# Tabulate complaint category counts and convert to individual lists
+	complaint_counts = beat_df["CURRENT_CATEGORY"].value_counts().to_frame()
+	name = complaint_counts["CURRENT_CATEGORY"].index.tolist()
+	count = complaint_counts["CURRENT_CATEGORY"].values.tolist()
+
+	# Create output list
+	output []
+	loop_len = min(k, len(name))
+
+	for i in range(loop_len):
+		pair = (name[i], count[i])
+		output.append(pair)
+
+	return output
+
+
+##### IPRA / COPRA COMPARISONS ####
 
 

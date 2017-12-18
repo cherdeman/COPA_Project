@@ -24,6 +24,9 @@ COPA is designed to be more independent and transparent by having increased acce
 police possession, an obligation to post redacted investigative reports to its website, etc. In addition, 
 if mediation is pursued to resolve a complaint the complainant must be included in the process.
 
+The complaint data was first published on November 1, 2017, an early act to promote transparency from
+the newly formed COPA.
+
 Additional Resources
 
 - Data source and documentation 
@@ -32,6 +35,8 @@ Additional Resources
 < http://www.chicagocopa.org/ >
 - Delineation of COPA v BIA jurisdiction 
 < http://www.chicagocopa.org/investigations/jurisdiction/ >
+- COPA complaint data press release
+< http://www.chicagocopa.org/press/copa-launches-datasets-on-city-of-chicago-data-portal-ten-years-of-comprehensive-data-will-be-available/>
 - BIA website 
 < https://home.chicagopolice.org/inside-the-cpd/reports/ >
 - Chicago Tribute collection of CPD articles 
