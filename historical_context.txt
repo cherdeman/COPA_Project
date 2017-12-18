@@ -1,19 +1,42 @@
-This document is intended to provided high-level context to aid in understanding the COPA dataset. Resources for additional research are listed at the end of the document.
+This document is intended to provided high-level context to aid in understanding the COPA dataset. Resources for 
+additional research are listed at the end of the document.
 
 Agencies
 
-The Bureau of Internal Affairs (BIA) is an arm of the Chicago Police Department (CPD) responsible for investigating misconduct by police officers. It currently investigates ~70% of police complaints that do not fall under the jurisdiction of COPA/IPRA. These complaints fall into the categories of criminal misconduct, bribery and other forms of corruption, drug or other substance abuse, and driving under the influece and other CPD rules violations.
+The Bureau of Internal Affairs (BIA) is an arm of the Chicago Police Department (CPD) responsible for investigating
+misconduct by police officers. It currently investigates ~70% of police complaints that do not fall under the 
+jurisdiction of COPA/IPRA. These complaints fall into the categories of criminal misconduct, bribery and other 
+forms of corruption, drug or other substance abuse, and driving under the influece and other CPD rules violations.
 
-The Independent Police Review Authority (IPRA) was established in 2007 as an independent disciplinary body for claims of police misconduct. IPRA served as intake for all allegations of misconduct and had jurisdiction to investigate a subset of claims, including those involving weapons discharges, excessive force, deaths in custody, and domestic violence. Mandatory investigations were triggered in the event of a weapons discharge or death or serious injury in custody. After the release of the Laquan McDonald video that showed the police shooting of a 17-year-old, CPD and IPRA came under renewed scrutiny. IPRA was found to be ineffective which led to the establishment of the Civilian Office of Police Accountability.
+The Independent Police Review Authority (IPRA) was established in 2007 as an independent disciplinary body for 
+claims of police misconduct. IPRA served as intake for all allegations of misconduct and had jurisdiction to 
+investigate a subset of claims, including those involving weapons discharges, excessive force, deaths in custody, 
+and domestic violence. Mandatory investigations were triggered in the event of a weapons discharge or death or 
+serious injury in custody. After the release of the Laquan McDonald video that showed the police shooting of a 
+17-year-old, CPD and IPRA came under renewed scrutiny. IPRA was found to be ineffective which led to the 
+establishment of the Civilian Office of Police Accountability.
 
-The Civilian Office of Police Accountability (COPA) began operation on September 15, 2017 and assumed IPRA's investigative and disciplinary responsibilities, with structural changes intended to increase the agency's effectiveness. COPA has increased funding and is guaranteed to receive an amount equivalent to at least 1% of CPD's operating budget. It's jurisdiction expanded to include the investigation of some civil right's claims. COPA is designed to be more independent and transparent by having increased access to all information in police possession, an obligation to post redacted investigative reports to its website, etc. In addition, if mediation is pursued to resolve a complaint the complainant must be included in the process.
+The Civilian Office of Police Accountability (COPA) began operation on September 15, 2017 and assumed IPRA's 
+investigative and disciplinary responsibilities, with structural changes intended to increase the agency's 
+effectiveness. COPA has increased funding and is guaranteed to receive an amount equivalent to at least 1% of 
+CPD's operating budget. It's jurisdiction expanded to include the investigation of some civil right's claims. 
+COPA is designed to be more independent and transparent by having increased access to all information in 
+police possession, an obligation to post redacted investigative reports to its website, etc. In addition, 
+if mediation is pursued to resolve a complaint the complainant must be included in the process.
 
 Additional Resources
 
-- Data source and documentation < https://data.cityofchicago.org/Public-Safety/COPA-Cases-Summary/mft5-nfa8 >
-- COPA website < http://www.chicagocopa.org/ >
-- Delineation of COPA v BIA jurisdiction < http://www.chicagocopa.org/investigations/jurisdiction/ >
-- BIA website < https://home.chicagopolice.org/inside-the-cpd/reports/ >
-- Chicago Tribute collection of CPD articles < http://www.chicagotribune.com/topic/crime-law-justice/law-enforcement/chicago-police-department-ORGOV000080-topic.html > 
-- Justice department report entitled Investigation of the Chicago Police Department, published January 13, 2017 < https://www.justice.gov/crt/case-document/file/925771/download >
-- Better Government Association "What's Really New About Chicago's Newest Police Oversight Office?" < https://www.bettergov.org/news/whats-really-new-about-chicagos-newest-police-oversight-office >
+- Data source and documentation 
+< https://data.cityofchicago.org/Public-Safety/COPA-Cases-Summary/mft5-nfa8 >
+- COPA website 
+< http://www.chicagocopa.org/ >
+- Delineation of COPA v BIA jurisdiction 
+< http://www.chicagocopa.org/investigations/jurisdiction/ >
+- BIA website 
+< https://home.chicagopolice.org/inside-the-cpd/reports/ >
+- Chicago Tribute collection of CPD articles 
+< http://www.chicagotribune.com/topic/crime-law-justice/law-enforcement/chicago-police-department-ORGOV000080-topic.html > 
+- Justice department report entitled Investigation of the Chicago Police Department, published January 13, 2017 
+< https://www.justice.gov/crt/case-document/file/925771/download >
+- Better Government Association "What's Really New About Chicago's Newest Police Oversight Office?" 
+< https://www.bettergov.org/news/whats-really-new-about-chicagos-newest-police-oversight-office >
