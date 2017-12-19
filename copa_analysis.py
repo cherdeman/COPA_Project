@@ -31,31 +31,37 @@ def load_full_dataset(filename):
 	cols = [cols[0]] + [cols[-1]] + cols[1:len(cols)-2]
 	full_df = full_df[cols]
 
+	# Find number of officers involved, exclude values over 15
+	# This limits excessive row expansion
+	full_df["OFFICER_COUNT"] = full_df["RACE_OF_INVOLVED_OFFICERS"].str.count("\|") + 1
+	limit_officers = full_df[(full_df["OFFICER_COUNT"] <= 15) | (pd.isnull(full_df["OFFICER_COUNT"]))]
+
 	# Split all columns that may have multiple values
-	full_df["BEAT"] = full_df["BEAT"].str.split("|", expand = True)
+	split_cols = ["BEAT", "RACE_OF_COMPLAINANTS", "SEX_OF_COMPLAINANTS", 
+		"AGE_OF_COMPLAINANTS", "RACE_OF_INVOLVED_OFFICERS", 
+		"SEX_OF_INVOLVED_OFFICERS", "AGE_OF_INVOLVED_OFFICERS", 
+		"YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"]
 	
-	full_df["RACE_OF_COMPLAINANTS"] = full_df["RACE_OF_COMPLAINANTS"].str.split("|", expand = True)
-	full_df["SEX_OF_COMPLAINANTS"] = full_df["SEX_OF_COMPLAINANTS"].str.split("|", expand = True)
-	full_df["AGE_OF_COMPLAINANTS"] = full_df["AGE_OF_COMPLAINANTS"].str.split("|", expand = True)
-    
-	full_df["RACE_OF_INVOLVED_OFFICERS"] = full_df["RACE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
-	full_df["SEX_OF_INVOLVED_OFFICERS"] = full_df["SEX_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
-	full_df["AGE_OF_INVOLVED_OFFICERS"] = full_df["AGE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
-	full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"] = full_df["YEARS_ON_FORCE_OF_INVOLVED_OFFICERS"].str.split("|", expand = True)
+	split_df = pd.concat([limit_officers[col].str.split("|", expand = True) for col in split_cols], axis = 1, keys = split_cols)
+	split_df.columns = split_df.columns.map(lambda x: "_".join((x[0], str(x[1]))))
+	
+	# Rejoin with full df
+	new_df = pd.concat([split_df, full_df.drop(split_cols + ["OFFICER_COUNT"], axis = 1)], axis = 1)
+	new_df.fillna(value = Nan, inplace = True)
 	
 	# HIGH LEVEL SUMMARY STATISTICS
 	# Total complaints
-	num_complaints = full_df.shape[0]
+	num_complaints = new_df.shape[0]
 
 	# Year range
-	min_year = full_df["COMPLAINT_YEAR"].min()
-	max_year = full_df["COMPLAINT_YEAR"].max()
+	min_year = new_df["COMPLAINT_YEAR"].min()
+	max_year = new_df["COMPLAINT_YEAR"].max()
 
 	# Complaints by year
-	year = full_df.groupby("COMPLAINT_YEAR").size().to_frame()
+	year = new_df.groupby("COMPLAINT_YEAR").size().to_frame()
 
 	# Complaints by assignment
-	assignment = full_df["ASSIGNMENT"].value_counts().to_frame()
+	assignment = new_df["ASSIGNMENT"].value_counts().to_frame()
 
 	# Print Statements
 	print()
@@ -74,7 +80,7 @@ def load_full_dataset(filename):
 		print(a, ": ", assignment.loc[a][0])
 	print()
 
-	return full_df
+	return new_df
 
 def reduce_to_copa_ipra(full_dataset):
 	'''
