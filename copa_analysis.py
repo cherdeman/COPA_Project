@@ -8,16 +8,18 @@ import matplotlib.pyplot as plt
 
 ##### CATEGORIES #####
 
-categories = [race_cat, sex_cat, age_cat, force_yrs]
-
 race_cat = ['African American / Black', 'American Indian or Alaskan Native', 
 'Asian or Pacific Islander', 'Hispanic', 'Unknown', 'White']
 
 sex_cat = ['Female', 'Male', 'Unknown']
 
-age_cat = ['0-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70+', 'Unknown']
+age_cat = ['0-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70+', 
+'Unknown']
 
-force_yrs = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30+', 'Unknown']
+force_yrs = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30+', 
+'Unknown']
+
+categories = [race_cat, sex_cat, age_cat, force_yrs]
 
 ##### LOADING FUNCTIONS #####
 
@@ -148,7 +150,7 @@ def volume_by_complainant_char(copa_ipra_df, characteristic, year = None, month 
 	output = []
 
 	for char in char_cat:
-		col = [x for x in col_list if "Complaint" in x and char in x]
+		col = [x for x in col_list if "Complaint" in x and char in x and characteristic.capitalize() in x]
 		vol = date_df[col].sum().iloc[0]
 		pair = (char, vol)
 		output.append(pair)
@@ -184,7 +186,7 @@ def volume_by_officer_char(copa_ipra_df, characteristic, year = None, month = No
 	output = []
 
 	for char in char_cat:
-		col = [x for x in col_list if "Officer" in x and char in x]
+		col = [x for x in col_list if "Officer" in x and char in x and characteristic.capitalize() in x]
 		vol = date_df[col].sum().iloc[0]
 		pair = (char, vol)
 		output.append(pair)
@@ -194,7 +196,50 @@ def volume_by_officer_char(copa_ipra_df, characteristic, year = None, month = No
 
 def volume_by_officer_complainant_char(copa_ipra_df, off_char, comp_char, year = None, month = None):
 	'''
+	Find the volume of complaints by age, sex, race, or years on the force 
+	of the officers, further broken down by the age, sex, or race of the 
+	complainants.
+
+	Inputs:
+		copa_ipra_df: (pandas dataframe) dataframe that excludes BIA cases
+		off_char: (string) represents characteristic of interest, must
+			be age, sex, race, or years
+		comp_char: (string) represents characteristic of interest, must
+			be age, sex, or race
+		year: (int) optional year of interest
+		month: (int) optional month of interest
+	
+	Returns: List of lists, the 0 element in each list is the officer 
+	characteristic, the remaining tuples represent complainant characteristic,
+	volume pairs
 	'''
+	# Officer characteristic category
+	char_cat = officer_category(off_char)
+
+	# Complainant characteristic category
+	c_char_cat = complainant_category(comp_char)
+
+	# Subset dataframe by date
+	date_df = date_subset(copa_ipra_df, year, month)
+
+	col_list = list(date_df.columns)
+	output = []
+
+	for char in char_cat:
+		char_output = []
+		col = [x for x in col_list if "Officer" in x and char in x and off_char.capitalize() in x]
+		#print(col)
+		char_df = date_df[date_df[col[0]] > 0 ]
+		#print(char_df[:5])
+		char_output.append((char))
+		for c_char in c_char_cat:
+			c_col = [y for y in col_list if "Complaint" in y and c_char in y and comp_char.capitalize() in y]
+			vol = char_df[c_col].sum().iloc[0]
+			pair = (c_char, vol)
+			char_output.append(pair)
+		output.append(char_output)
+
+	return output
 
 
 ##### IPRA / COPRA COMPARISONS #####
@@ -227,6 +272,14 @@ def date_subset(copa_ipra_df, year = None, month = None):
 
 def complainant_category(characteristic):
 	'''
+	Determines the category to search based on the characteristic
+
+	Intput: 
+		characteristic: (string) represents characteristic of interest, must
+			be age, sex, or race
+
+	Returns: 
+		char_cat: list of characteristic types
 	'''
 	if characteristic == "sex":
 		char_cat = sex_cat
@@ -240,6 +293,14 @@ def complainant_category(characteristic):
 
 def officer_category(characteristic):
 	'''
+	Determines the category to search based on the characteristic
+
+	Intput: 
+		characteristic: (string) represents characteristic of interest, must
+			be age, sex, race, or years (for years on force)
+
+	Returns: 
+		char_cat: list of characteristic types
 	'''
 	if characteristic == "sex":
 		char_cat = sex_cat
@@ -253,10 +314,14 @@ def officer_category(characteristic):
 	return char_cat
 
 
-def show_barchart(output):
+def show_barchart(output, ylabel, title):
 	'''
 	Inputs:
-		output: (list of tuples)
+		output: (list of tuples) volume output from a function above
+		ylabel: (string) label for the y-axis of the chart
+		title: (string) title for the chart
+
+	Returns: nothing, shows a bar chart
 	'''
 	categories = []
 	values = []
@@ -266,8 +331,16 @@ def show_barchart(output):
 		values.append(tup[1])
 
 	plt.bar(categories, values, align = "center", alpha = 0.5)
+	plt.xticks(categories, rotation = 45)
+	plt.ylabel(ylabel)
+	plt.title(title)
 
 	plt.show()
+
+def show_comp_barchart(output):
+	'''
+	'''
+	pass
 
 
 
